@@ -37,10 +37,14 @@ def get_help_message ():
     return response
 
 def get_about_this(VERSION):
-    response = (f"Simple Expenses Bot (pyTelegramBot) v{VERSION}"
+    response = (f"Gestion de envio de paquetes BOT (pyTelegramBot) v{VERSION}"
     "\n\n"
-    "Desarrollado por Angie Daniela Chisco Cadavid <chiscoangiedaniela@gmail.com>"
+    "Desarrollado por"
+    "\n" 
+    "Angie Daniela Chisco Cadavid <chiscoangiedaniela@gmail.com>"
+    "\n"
     "Brian Camilo Piragauta Mesa <brianpiragauta@gmail.com>"
+    "\n"
     "juan Pablo Toro Arias <juanp.toroa@autonoma.edu.co>"
     )
     return response
