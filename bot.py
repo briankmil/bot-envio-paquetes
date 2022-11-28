@@ -18,7 +18,7 @@ def on_command_start(message):
     bot.send_chat_action(message.chat.id, 'typing')
     bot.send_message(message.chat.id,logic.get_welcome_message(bot.get_me()),parse_mode="Markdown")
     bot.send_message(message.chat.id,logic.get_help_message(),parse_mode="Markdown")
-    logic.register_account(message.from_user.id)
+    logic.registro_cuenta(message.from_user.id)
 
 @bot.message_handler(commands=['help'])
 def on_command_help(message):
@@ -29,7 +29,6 @@ def on_command_help(message):
 def on_command_about(message):
     bot.send_chat_action(message.chat.id, 'typing')
     bot.send_message(message.chat.id,logic.get_about_this(config.VERSION), parse_mode="Markdown")
-
 
 
 # esto siempre al final del archivo principal

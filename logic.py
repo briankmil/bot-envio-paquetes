@@ -9,6 +9,15 @@ def get_welcome_message(bot_data):
     response = (f"Hola, soy *{bot_data.first_name}* "f"también conocido como *{bot_data.username}*.\n\n""¡Estoy aquí para gestionar el envio de paquetes!")
     return response
 
+def registro_cuenta(user_id):
+    usuario = db.session.query(Usuario).get(user_id)
+    db.session.commit()
+    if usuario == None:
+        usuario = Usuario(user_id, 0)
+        db.session.add(Usuario)
+        db.session.commit()
+        return True
+    return False
 
 def get_help_message ():
     response = (
