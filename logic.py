@@ -31,6 +31,8 @@ def get_about_this(VERSION):
     response = (f"Simple Expenses Bot (pyTelegramBot) v{VERSION}"
     "\n\n"
     "Desarrollado por Angie Daniela Chisco Cadavid <chiscoangiedaniela@gmail.com>"
+    "Brian Camilo Piragauta Mesa <brianpiragauta@gmail.com>"
+    "juan Pablo Toro Arias <juanp.toroa@autonoma.edu.co>"
     )
     return response
 
