@@ -13,11 +13,38 @@ def registro_cuenta(user_id):
     usuario = db.session.query(Usuario).get(user_id)
     db.session.commit()
     if usuario == None:
-        usuario = Usuario(user_id, 0)
-        db.session.add(Usuario)
+        usuario = Usuario(user_id,"admin","123","DANI")
+        db.session.add(usuario)
         db.session.commit()
         return True
     return False
+
+def verifique_admin(user_id):
+    administrador = [1898458696]
+    return user_id in administrador
+
+def listar_paquetes():
+    paquetes = db.session.query(Paquete).all()
+    return paquetes
+
+def crear_paquete (user_id, nombreRemitente,peso,direccionDestino):
+    if peso <= 0:
+        return False 
+    estado = Estado("en procesos",datetime.now(),user_id)
+    db.session.add(estado)
+    paquete = Paquete("1",user_id,datetime.now(),nombreRemitente,peso,direccionDestino)
+    db.session.add(paquete)
+    db.session.commit()
+    return True
+
+def actualizar_paquete (user_id,  nombreRemitente,peso,direccionDestino):
+    paquete = db.session.query(Paquete).get(user_id)
+    db.session.commit()
+    if not paquete:
+        return False
+    db.session.commit()
+    return True
+
 
 def get_help_message ():
     response = (
@@ -26,6 +53,7 @@ def get_help_message ():
         "*/start* - Inicia la interacción con el bot (obligatorio)\n"
         "*/help* - Muestra este mensaje de ayuda\n"
         "*/about* - Muestra detalles de esta aplicación\n"
+        "*usuario {rol}* - Muestra opciones del usuarios eleccionado\n"
         #"*gane|gané|g {cantidad}* - Registra un saldo positivo\n"
         #"*gaste|gasté|gg {cantidad}* - Registra un saldo negativo\n"
         #"*listar ganancias|lg en {índice_mes} de {año}* - Lista las ganancias de un mes/año\n"

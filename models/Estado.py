@@ -7,15 +7,14 @@ class Estado(db.Base):
     tipo = Column('tipo', String, nullable=False)
     fechaHora=Column('contrasena', String, nullable=False)
     when = Column('when', DateTime, server_default=func.now(),nullable=True)
-    paquetes_id = Column('paquetes_id', Integer, ForeignKey('paquetes.id',onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    usuarios_id = Column('usuarios_id', String(15), ForeignKey('usuarios.id',onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    usuarios = relationship('Usuario', back_populates='estados')
     paquetes = relationship('Paquete', back_populates='estados')
   
-    def __init__(self,id,tipo,fechaHora, when, paquetes_id):
-        self.id = id
+    def __init__(self,tipo,fechaHora, usuarios_id):
         self.tipo = tipo
         self.fechaHora = fechaHora
-        self.when = when
-        self.paquetes_id = paquetes_id
-   
+        self.usuarios_id = usuarios_id
+
     def __repr__(self):
         return f"<Estado {self.id}>"
