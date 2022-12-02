@@ -17,4 +17,5 @@ class Estado(db.Base):
         self.usuarios_id = usuarios_id
 
     def __repr__(self):
-        return f"<Estado {self.id}>"
+        return f"{self.id}"
+

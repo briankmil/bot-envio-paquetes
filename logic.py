@@ -28,11 +28,13 @@ def listar_paquetes():
     return paquetes
 
 def crear_paquete (user_id, nombreRemitente,peso,direccionDestino):
+    resultado=0
     if peso <= 0:
         return False 
     estado = Estado("en procesos",datetime.now(),user_id)
     db.session.add(estado)
-    paquete = Paquete("1",user_id,datetime.now(),nombreRemitente,peso,direccionDestino)
+    estado_id=estado
+    paquete = Paquete(repr(estado_id),user_id,datetime.now(),nombreRemitente,peso,direccionDestino)
     db.session.add(paquete)
     db.session.commit()
     return True
@@ -46,6 +48,7 @@ def actualizar_paquete (user_id,  nombreRemitente,peso,direccionDestino):
     return True
 
 
+
 def get_help_message ():
     response = (
         "Estos son los comandos y órdenes disponibles:\n"
@@ -54,8 +57,8 @@ def get_help_message ():
         "*/help* - Muestra este mensaje de ayuda\n"
         "*/about* - Muestra detalles de esta aplicación\n"
         "*usuario {rol}* - Muestra opciones del usuarios eleccionado\n"
-        #"*gane|gané|g {cantidad}* - Registra un saldo positivo\n"
-        #"*gaste|gasté|gg {cantidad}* - Registra un saldo negativo\n"
+        "*crear|crear paquete|cp {normbre remitente,peso,direccion destino}* - Registra un paquete\n"
+        "*listar paquetes|lp* - Lista los paquetes exitentes para el administrador\n"
         #"*listar ganancias|lg en {índice_mes} de {año}* - Lista las ganancias de un mes/año\n"
         #"*listar gastos|lgg en {mes} de {año}* - Lista los gastos de un mes/año\n"
         #"*obtener saldo|s* - Muestra el saldo actual (disponible)\n"
