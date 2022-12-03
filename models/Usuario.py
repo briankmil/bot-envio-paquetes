@@ -19,4 +19,4 @@ class Usuario(db.Base):
      
     
     def __repr__(self):
-        return f"<Usuario {self.id}>"
+        return f"<Usuario id: {self.id}, tipo: {self.tipo}, contraseña: {self.contrasena}, nombre: {self.nombre}>"

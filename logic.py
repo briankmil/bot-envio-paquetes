@@ -9,18 +9,18 @@ def get_welcome_message(bot_data):
     response = (f"Hola, soy *{bot_data.first_name}* "f"también conocido como *{bot_data.username}*.\n\n""¡Estoy aquí para gestionar el envio de paquetes!")
     return response
 
-def registro_cuenta(user_id):
-    usuario = db.session.query(Usuario).get(user_id)
+def registro_cuenta(userInfo):
+    usuario = db.session.query(Usuario).get(userInfo.id)
     db.session.commit()
     if usuario == None:
-        usuario = Usuario(user_id,"admin","123","DANI")
-        db.session.add(usuario)
-        db.session.commit()
-        return True
+         usuario = Usuario(userInfo.id,"admin","123",userInfo.first_name)
+         db.session.add(usuario)
+         db.session.commit()
+         return True
     return False
 
 def verifique_admin(user_id):
-    administrador = [1898458696]
+    administrador = [1898458696, 5141666038]
     return user_id in administrador
 
 def listar_paquetes():
@@ -49,23 +49,30 @@ def actualizar_paquete (user_id,  nombreRemitente,peso,direccionDestino):
 
 
 
-def get_help_message ():
-    response = (
-        "Estos son los comandos y órdenes disponibles:\n"
-        "\n"
-        "*/start* - Inicia la interacción con el bot (obligatorio)\n"
-        "*/help* - Muestra este mensaje de ayuda\n"
-        "*/about* - Muestra detalles de esta aplicación\n"
-        "*usuario {rol}* - Muestra opciones del usuarios eleccionado\n"
-        "*crear|crear paquete|cp {normbre remitente,peso,direccion destino}* - Registra un paquete\n"
-        "*listar paquetes|lp* - Lista los paquetes exitentes para el administrador\n"
-        #"*listar ganancias|lg en {índice_mes} de {año}* - Lista las ganancias de un mes/año\n"
-        #"*listar gastos|lgg en {mes} de {año}* - Lista los gastos de un mes/año\n"
-        #"*obtener saldo|s* - Muestra el saldo actual (disponible)\n"
-        #"*remover|r ganancia|g|gasto|gg {índice}* - Remueve una ganancia o un gasto según su índice\n"
-        #"*listar cuentas|lc* - Lista las cuentas registradas (sólo admin)\n"
+def get_help_message (idUsuario):
+    if verifique_admin(idUsuario):
+        return (
+            "Estos son los comandos y órdenes disponibles:\n"
+            "\n"
+            "*/start* - Inicia la interacción con el bot (obligatorio)\n"
+            "*/help* - Muestra este mensaje de ayuda\n"
+            "*/about* - Muestra detalles de esta aplicación\n"
+            f"*Admin* \n"
+            "*listar paquetes|lp* - Lista los paquetes exitentes para el administrador\n"
+            "*agregar estado|ae* - Agregar un nuevo estado a un paquete\n"
+            "*eliminar estado|ee* - Eliminar estado de un paquete, cuando hay error\n"
+            )
+    else:
+        return (
+            "Estos son los comandos y órdenes disponibles:\n"
+            "\n"
+            "*/start* - Inicia la interacción con el bot (obligatorio)\n"
+            "*/help* - Muestra este mensaje de ayuda\n"
+            "*/about* - Muestra detalles de esta aplicación\n"
+            "*crear|crear paquete|cp {normbre remitente,peso,direccion destino}* - Registra un paquete\n"
+            "*listar paquetes|lp* - Lista los paquetes exitentes para el usuario\n"
+            "*eliminar paquetes|lp* - Elimina un paquete\n"
         )
-    return response
 
 def get_about_this(VERSION):
     response = (f"Gestion de envio de paquetes BOT (pyTelegramBot) v{VERSION}"
@@ -76,7 +83,7 @@ def get_about_this(VERSION):
     "\n"
     "Brian Camilo Piragauta Mesa <brianpiragauta@gmail.com>"
     "\n"
-    "juan Pablo Toro Arias <juanp.toroa@autonoma.edu.co>"
+    "Juan Pablo Toro Arias <juanp.toroa@autonoma.edu.co>"
     )
     return response
 

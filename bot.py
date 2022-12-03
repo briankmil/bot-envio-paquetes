@@ -43,13 +43,17 @@ def listar_paquetes(message):
 def on_command_start(message):
     bot.send_chat_action(message.chat.id, 'typing')
     bot.send_message(message.chat.id,logic.get_welcome_message(bot.get_me()),parse_mode="Markdown")
-    bot.send_message(message.chat.id,logic.get_help_message(),parse_mode="Markdown")
-    logic.registro_cuenta(message.from_user.id)
+    bot.send_message(message.chat.id,logic.get_help_message(message.from_user.id),parse_mode="Markdown")
+    logic.registro_cuenta(message.from_user)
+    # if logic.verifique_admin(message.from_user.id):
+    #     bot.send_message(message.chat.id,"Ingrese su contraseña",parse_mode="Markdown")
+
+
 
 @bot.message_handler(commands=['help'])
 def on_command_help(message):
     bot.send_chat_action(message.chat.id, 'typing')
-    bot.send_message(message.chat.id,logic.get_help_message(),parse_mode="Markdown") 
+    bot.send_message(message.chat.id,logic.get_help_message(message.from_user.id),parse_mode="Markdown") 
 
 @bot.message_handler(commands=['about'])
 def on_command_about(message):
