@@ -23,9 +23,29 @@ def verifique_admin(user_id):
     administrador = [1898458696, 5141666038]
     return user_id in administrador
 
-def listar_paquetes():
+def listar_paquetes_admin():
+    text = ""
+    #paquetes que aún no han sido entregados
     paquetes = db.session.query(Paquete).all()
-    return paquetes
+    text = "``` Listado de paquetes:\n\n"
+    for paquete in paquetes:
+        text += f"| {paquete.id} | ${paquete.nombreRemitente} |\n"
+        text += "```"
+    return text
+
+def listar_paquetes_por_usuario(id_usuario):
+    #paquetes registrados que le pertenecen al usuario
+    # id_usuario = 1898458696
+    text = ""
+    stmt = db.session.query(Paquete.id, Paquete.nombreRemitente, Paquete.direccionDestino, Paquete.estados_id, Paquete.peso,Paquete.fechaActual).where(Paquete.estados.has(Estado.usuarios_id == id_usuario), Paquete.estados.has(Estado.tipo == "en procesos"))
+    paquetes = db.session.execute(stmt).all() 
+    if paquetes == []:
+        return "No se encontraron paquetes para este usuario"
+    text = "``` Listado de paquetes:\n\n"
+    for paquete in paquetes:
+        text += f" {paquete.id} | {paquete.nombreRemitente} | {paquete.direccionDestino} | {paquete.estados_id}\n"
+    text += "```"
+    return text
 
 def crear_paquete (user_id, nombreRemitente,peso,direccionDestino):
     resultado=0

@@ -11,6 +11,8 @@ class Paquete(db.Base):
     nombreRemitente=Column('nombreRemitente', String, nullable=False)
     peso=Column('peso', Float, nullable=False)
     direccionDestino=Column('direccionDestino', String, nullable=False)
+    # usuarios_id = Column('usuarios_id', String(15), ForeignKey('usuarios.id',onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    # usuarios = relationship('Usuario', back_populates='paquetes')
     
     def __init__(self,estados_id,usuarios_id,fechaActual,nombreRemitente,peso,direccionDestino):
         self.estados_id = estados_id

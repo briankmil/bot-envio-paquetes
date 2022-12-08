@@ -29,13 +29,9 @@ def listar_paquetes(message):
     bot.send_chat_action(message.chat.id, 'typing')
     text = ""
     if logic.verifique_admin(message.from_user.id):
-        paquetes = logic.listar_paquetes()
-        text = "``` Listado de paquetes:\n\n"
-        for paquete in paquetes:
-            text += f"| {paquete.id} | ${paquete.nombreRemitente} |\n"
-        text += "```"
+        text= logic.listar_paquetes_admin();
     else:
-        text = f"\U0000274C Esta funcionalidad sólo está disponible para administradores"
+        text = logic.listar_paquetes_por_usuario(message.from_user.id);
     bot.reply_to(message, text, parse_mode="Markdown")
 
 
