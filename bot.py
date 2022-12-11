@@ -7,6 +7,7 @@ import database.db as db
 from telebot import types
 
 #########################################################
+id_paquete_eliminar = None
 if __name__ == '__main__':
     db.Base.metadata.create_all(db.engine)
 #########################################################
@@ -52,25 +53,34 @@ def eliminar_paquete_by_id(message):
     bot.send_chat_action(message.chat.id, 'typing')    
     partes = re.split("^(eliminar paquete|e)",message.text)
     #Consultar si el paquete tiene el estado recogido.
-    if logic.permite_eliminar(message.from_user.id, partes[2].strip()):
+    global id_paquete_eliminar 
+    id_paquete_eliminar = partes[2].strip()
+    if logic.permite_eliminar(message.from_user.id, id_paquete_eliminar):
         try:
             #Mensaje validacion
             markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
             markup.add('SI', 'NO')
-            response = bot.reply_to(message, '¿Confirma eliminar este paquete?',
-            reply_markup=markup)
-            bot.register_next_step_handler(response, eliminar_paquete(partes[2].strip()))
+            response = bot.reply_to(message, '¿Confirma eliminar este paquete?', reply_markup=markup)
+            bot.register_next_step_handler(response, eliminar_paquete)
         except Exception as e:
             bot.reply_to(message, f"Algo terrible sucedió: {e}")
+            id_paquete_eliminar = None
 
     else:
-        bot.reply_to(message, "No se puede eliminar este mensaje", parse_mode="Markdown")
+        bot.reply_to(message, "No se puede eliminar este paquete, valide que le pertenezca y que no tenga estado 'recogido'", parse_mode="Markdown")
 
 
-def eliminar_paquete(message, id_paquete):
+
+def eliminar_paquete(message):
+    global id_paquete_eliminar
     res = message.text
     if res =="SI":
-        bot.reply_to(message, logic.eliminar_paquete_by_id(id_paquete), parse_mode="Markdown")
+        bot.reply_to(message, logic.eliminar_paquete_by_id(id_paquete_eliminar), parse_mode="Markdown")
+    else:
+        bot.reply_to(message, "No se ha eliminado el paquete", parse_mode="Markdown")
+        id_paquete_eliminar = None
+    
+
 
 @bot.message_handler(regexp=r"^(consultar estados|ce) \d+$")
 def consultar_estadps(message):
