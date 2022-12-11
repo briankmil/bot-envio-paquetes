@@ -99,15 +99,31 @@ def eliminar_paquete_by_id(id_paquete):
 def consultar_estados_by_id(id_usuario, id_paquete):
     # id_usuario = 1898458696
     text = ""
-    stmt = db.session.query(Paquete.id, Paquete.nombreRemitente, Paquete.direccionDestino, Paquete.estados_id, Paquete.peso,Paquete.fechaActual).where(Paquete.estados.has(Estado.usuarios_id == id_usuario), Paquete.estados.has(Estado.tipo == "en procesos"))
+    stmt = db.session.query(Paquete.id, Paquete.estados_id).where(Paquete.id == id_paquete)
     paquetes = db.session.execute(stmt).all() 
-    if paquetes == []:
-        return "No se encontraron paquetes para este usuario"
-    text = "``` Listado de paquetes:\n\n"
     for paquete in paquetes:
-        text += f" {paquete.id} | {paquete.nombreRemitente} | {paquete.direccionDestino} | {paquete.estados_id}\n"
-    text += "```"
+        stmt = db.session.query(Estado.id, Estado.tipo, Estado.usuarios_id, Estado.fechaHora).where(Estado.id == paquete.estados_id)
+        estados = db.session.execute(stmt).all() 
+        if estados == []:
+            return "No se encontraron estados para este paquete"
+        text = "``` Listado de estados:\n\n"
+        for estado in estados:
+            text += f" {estado.id} | {estado.tipo} | {estado.fechaHora}\n"
+        text += "```"        
     return text
+
+def paquete_perteneceUsuario(id_paquete, id_usuario):
+    stmt = db.session.query(Paquete.id, Paquete.estados_id).where(Paquete.id == id_paquete)
+    paquetes = db.session.execute(stmt).all() 
+    for paquete in paquetes:
+        stmt = db.session.query(Estado.id, Estado.tipo, Estado.usuarios_id).where(Estado.id == paquete.estados_id)
+        estados = db.session.execute(stmt).all() 
+        for estado in estados:
+            if (estado.tipo == "en procesos" and estado.usuarios_id == str(id_usuario)):
+                return True
+    return False
+
+
 
 def get_help_message (idUsuario):
     if verifique_admin(idUsuario) == "True":
