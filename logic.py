@@ -30,17 +30,19 @@ def listar_paquetes_admin():
     text = ""
     #paquetes que aún no han sido entregados
     paquetes = db.session.query(Paquete).all()
+    if paquetes == []:
+        return "No hay paquetes registrados"
     text = "``` Listado de paquetes:\n\n"
     for paquete in paquetes:
-        text += f"| {paquete.id} | ${paquete.nombreRemitente} |\n"
-        text += "```"
+        text += f" {paquete.id} | {paquete.nombreRemitente} | {paquete.direccionDestino} | {paquete.estados_id}\n"
+    text += "```"
     return text
 
 def listar_paquetes_por_usuario(id_usuario):
     #paquetes registrados que le pertenecen al usuario
     # id_usuario = 1898458696
     text = ""
-    stmt = db.session.query(Paquete.id, Paquete.nombreRemitente, Paquete.direccionDestino, Paquete.estados_id, Paquete.peso,Paquete.fechaActual).where(Paquete.estados.has(Estado.usuarios_id == id_usuario), Paquete.estados.has(Estado.tipo == "en procesos"))
+    stmt = db.session.query(Paquete.id, Paquete.nombreRemitente, Paquete.direccionDestino, Paquete.estados_id, Paquete.peso,Paquete.fechaActual).where(Paquete.estados.has(Estado.usuarios_id == id_usuario))
     paquetes = db.session.execute(stmt).all() 
     if paquetes == []:
         return "No se encontraron paquetes para este usuario"

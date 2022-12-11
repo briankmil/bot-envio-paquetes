@@ -34,7 +34,6 @@ def listar_paquetes(message):
         text= logic.listar_paquetes_admin();
     else:
         text = logic.listar_paquetes_por_usuario(message.from_user.id);
-        print("************************",text)
     bot.reply_to(message, text, parse_mode="Markdown")
 
 
