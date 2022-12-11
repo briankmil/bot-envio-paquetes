@@ -56,6 +56,7 @@ def crear_paquete (user_id, nombreRemitente,peso,direccionDestino):
         return False 
     estado = Estado("en procesos",datetime.now(),user_id)
     db.session.add(estado)
+    db.session.commit()
     estado_id=estado
     paquete = Paquete(repr(estado_id),user_id,datetime.now(),nombreRemitente,peso,direccionDestino)
     db.session.add(paquete)
@@ -121,10 +122,10 @@ def get_help_message (idUsuario):
             "*/start* - Inicia la interacción con el bot (obligatorio)\n"
             "*/help* - Muestra este mensaje de ayuda\n"
             "*/about* - Muestra detalles de esta aplicación\n"
-            "*crear|crear paquete|cp {normbre remitente,peso,direccion destino}* - Registra un paquete\n"
+            "*crear|crear paquete|cp {nombre remitente,peso,direccion destino}* - Registra un paquete\n"
             "*listar paquetes|lp* - Lista los paquetes exitentes para el usuario\n"
-            "*eliminar paquetes|lp* - Elimina un paquete\n"
-            "*consultar estados|ce* - Consulta estados de un paquete\n"
+            "*eliminar paquetes|e {id_paquete}* - Elimina un paquete\n"
+            "*consultar estados|ce {id_paquete}* - Consulta estados de un paquete\n"
         )
 
 def get_about_this(VERSION):
