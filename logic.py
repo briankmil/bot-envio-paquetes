@@ -21,7 +21,10 @@ def registro_cuenta(userInfo):
 
 def verifique_admin(user_id):
     administrador = [1898458696, 5141666038]
-    return user_id in administrador
+    if user_id in administrador:
+        return True
+    else:
+        return False
 
 def listar_paquetes_admin():
     text = ""
@@ -99,7 +102,7 @@ def consultar_estados_by_id(id_usuario, id_paquete):
     return text
 
 def get_help_message (idUsuario):
-    if verifique_admin(idUsuario):
+    if verifique_admin(idUsuario) == "True":
         return (
             "Estos son los comandos y órdenes disponibles:\n"
             "\n"
@@ -110,7 +113,6 @@ def get_help_message (idUsuario):
             "*listar paquetes|lp* - Lista los paquetes exitentes para el administrador\n"
             "*agregar estado|ae* - Agregar un nuevo estado a un paquete\n"
             "*eliminar estado|ee* - Eliminar estado de un paquete, cuando hay error\n"
-            "*consultar estados|ce* - Consulta estados de un paquete\n"
             )
     else:
         return (
@@ -122,6 +124,7 @@ def get_help_message (idUsuario):
             "*crear|crear paquete|cp {normbre remitente,peso,direccion destino}* - Registra un paquete\n"
             "*listar paquetes|lp* - Lista los paquetes exitentes para el usuario\n"
             "*eliminar paquetes|lp* - Elimina un paquete\n"
+            "*consultar estados|ce* - Consulta estados de un paquete\n"
         )
 
 def get_about_this(VERSION):

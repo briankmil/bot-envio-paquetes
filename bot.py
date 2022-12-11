@@ -29,10 +29,11 @@ def crear_paquete(message):
 def listar_paquetes(message):
     bot.send_chat_action(message.chat.id, 'typing')
     text = ""
-    if logic.verifique_admin(message.from_user.id):
+    if logic.verifique_admin(message.from_user.id) == "True":
         text= logic.listar_paquetes_admin();
     else:
         text = logic.listar_paquetes_por_usuario(message.from_user.id);
+        print("************************",text)
     bot.reply_to(message, text, parse_mode="Markdown")
 
 
