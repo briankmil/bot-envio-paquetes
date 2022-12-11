@@ -71,6 +71,11 @@ def eliminar_paquete(message, id_paquete):
     if res =="SI":
         bot.reply_to(message, logic.eliminar_paquete_by_id(id_paquete), parse_mode="Markdown")
 
+@bot.message_handler(regexp=r"^(consultar estados|ce) \d+$")
+def consultar_estadps(message):
+    bot.send_chat_action(message.chat.id, 'typing')    
+    partes = re.split("^(consultar estados|ce)",message.text)
+    bot.reply_to(message, logic.consultar_estados_by_id(message.from_user.id,partes[2].strip()), parse_mode="Markdown")
 
 @bot.message_handler(commands=['help'])
 def on_command_help(message):

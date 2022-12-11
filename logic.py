@@ -84,7 +84,19 @@ def eliminar_paquete_by_id(id_paquete):
         db.session.commit()
         return (f"Paquete {paquete.id} eliminado")
     return "Paquete no encontrado"
-
+    
+def consultar_estados_by_id(id_usuario, id_paquete):
+    # id_usuario = 1898458696
+    text = ""
+    stmt = db.session.query(Paquete.id, Paquete.nombreRemitente, Paquete.direccionDestino, Paquete.estados_id, Paquete.peso,Paquete.fechaActual).where(Paquete.estados.has(Estado.usuarios_id == id_usuario), Paquete.estados.has(Estado.tipo == "en procesos"))
+    paquetes = db.session.execute(stmt).all() 
+    if paquetes == []:
+        return "No se encontraron paquetes para este usuario"
+    text = "``` Listado de paquetes:\n\n"
+    for paquete in paquetes:
+        text += f" {paquete.id} | {paquete.nombreRemitente} | {paquete.direccionDestino} | {paquete.estados_id}\n"
+    text += "```"
+    return text
 
 def get_help_message (idUsuario):
     if verifique_admin(idUsuario):
@@ -98,6 +110,7 @@ def get_help_message (idUsuario):
             "*listar paquetes|lp* - Lista los paquetes exitentes para el administrador\n"
             "*agregar estado|ae* - Agregar un nuevo estado a un paquete\n"
             "*eliminar estado|ee* - Eliminar estado de un paquete, cuando hay error\n"
+            "*consultar estados|ce* - Consulta estados de un paquete\n"
             )
     else:
         return (
