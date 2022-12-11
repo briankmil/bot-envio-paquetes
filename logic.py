@@ -67,6 +67,23 @@ def actualizar_paquete (user_id,  nombreRemitente,peso,direccionDestino):
     db.session.commit()
     return True
 
+def permite_eliminar(id_usuario, id_paquete):
+    stmt = db.session.query(Paquete.id, Paquete.estados_id).where(Paquete.id == id_paquete, Paquete.estados.has(Estado.usuarios_id == id_usuario), Paquete.estados.has(Estado.tipo == "recogido"))
+    paquetes = db.session.execute(stmt).all() 
+    if paquetes == []:
+        return True
+    else:
+        return False
+
+def eliminar_paquete_by_id(id_paquete):
+    paquete = db.session.query(Paquete).get(id_paquete)
+    print(f"Paquete Encontrado:", paquete)
+    if paquete != None:
+        #  usuario = Usuario(userInfo.id,"admin","123",userInfo.first_name)
+        db.session.delete(paquete)
+        db.session.commit()
+        return (f"Paquete {paquete.id} eliminado")
+    return "Paquete no encontrado"
 
 
 def get_help_message (idUsuario):
