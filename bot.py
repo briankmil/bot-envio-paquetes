@@ -25,7 +25,6 @@ def crear_paquete(message):
         if control == True 
         else "\U0001F4A9 Tuve problemas registrando la transacción, ejecuta/start y vuelve a intentarlo")
 
-
 @bot.message_handler(regexp=r"^(listar paquetes|lp)$")
 def listar_paquetes(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -94,7 +93,6 @@ def on_command_about(message):
     bot.send_chat_action(message.chat.id, 'typing')
     bot.send_message(message.chat.id,logic.get_about_this(config.VERSION), parse_mode="Markdown")
 
-
 # esto siempre al final del archivo principal es por si no encuentra la opcion
 @bot.message_handler(func=lambda message: True)
 def on_fallback(message):
@@ -102,6 +100,19 @@ def on_fallback(message):
     sleep(1)
     bot.reply_to( message,"\U0001F63F Ups, no entendí lo que me dijiste.")
 
+
+@bot.message_handler(regexp=r"^(cambiar estado|camb estd|cae) ([a-zA-ZÀ-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-ZÀ-ÖØ-öø-ÿ]+\.?)*),([+-]?([0-9]*[.])?[0-9]+),([a-zA-Z1-9À-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-Z1-9À-ÖØ-öø-ÿ]+\.?)* (((#|[nN][oO]\.?) ?)?\d{1,4}(( ?[a-zA-Z0-9\-]+)+)?))$")
+def cambiar_estado(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    partes = re.match(r"^(cambiar estado) ([a-zA-ZÀ-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-ZÀ-ÖØ-öø-ÿ]+\.?)*),([+-]?([0-9]*[.])?[0-9]+),([a-zA-Z1-9À-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-Z1-9À-ÖØ-öø-ÿ]+\.?)* (((#|[nN][oO]\.?) ?)?\d{1,4}(( ?[a-zA-Z0-9\-]+)+)?))$",message.text,flags=re.IGNORECASE)
+    #print (partes.groups())
+    nombreRemitente = partes[2]
+    peso = float(partes[5])
+    direccionDestino = partes[7]
+    control = logic.crear_paquete (message.from_user.id,nombreRemitente,peso,direccionDestino)
+    bot.reply_to(message,f"\U0001F4B0 ¡Paquete Creado!: {nombreRemitente}"
+        if control == True 
+        else "\U0001F4A9 Tuve problemas registrando la transacción, ejecuta/start y vuelve a intentarlo")
 #########################################################
 if __name__ == '__main__':
     bot.polling(timeout=20)
