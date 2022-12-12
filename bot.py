@@ -36,7 +36,6 @@ def listar_paquetes(message):
         text = logic.listar_paquetes_por_usuario(message.from_user.id);
     bot.reply_to(message, text, parse_mode="Markdown")
 
-
 @bot.message_handler(commands=['start'])
 def on_command_start(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -45,7 +44,7 @@ def on_command_start(message):
     logic.registro_cuenta(message.from_user)
     # if logic.verifique_admin(message.from_user.id):
     #     bot.send_message(message.chat.id,"Ingrese su contraseña",parse_mode="Markdown")
-    
+
 @bot.message_handler(regexp=r"^(eliminar paquete|e) \d+$")
 def eliminar_paquete_by_id(message):
     bot.send_chat_action(message.chat.id, 'typing')    
