@@ -3,11 +3,44 @@ from models.Usuario import Usuario
 from models.Paquete import Paquete
 from models.Estado import Estado
 from datetime import datetime
-from sqlalchemy import extract
+from sqlalchemy import extract, and_
+from datetime import datetime
 
 def get_welcome_message(bot_data):
     response = (f"Hola, soy *{bot_data.first_name}* "f"también conocido como *{bot_data.username}*.\n\n""¡Estoy aquí para gestionar el envio de paquetes!")
     return response
+
+def cambiar_estado(paquete_id, user_id, estado_id, nombreEstado):
+    paquete = db.session.query(Paquete).get(paquete_id)
+    db.session.commit()
+
+    if paquete == None:
+        return "El paquete no ha sido encontrado."
+
+    estado = Estado(nombreEstado,datetime.now(),user_id)
+    db.session.add(estado)
+    db.session.commit()
+    estado_id = estado
+
+    db.session.query(Estado).get(paquete_id).update({'estados_id': estado_id})
+    db.session.commit()
+
+    return True
+
+def remover_estado(nombreEstado, fechaEstado):
+    estado = db.session.query(Estado).filter(and_(Estado.tipo == nombreEstado, Estado.fechaHora.date == fechaEstado))
+
+    estado_id = estado
+
+    paquete = db.session.query(Paquete).filter(Paquete.estados_id == estado_id)
+
+    if paquete != None:
+        return "El estado esta asociado a un paquete"
+    
+    db.session.query(Estado).delete(estado_id)
+
+    return True
+
 
 def registro_cuenta(userInfo):
     usuario = db.session.query(Usuario).get(userInfo.id)
@@ -53,10 +86,9 @@ def listar_paquetes_por_usuario(id_usuario):
     return text
 
 def crear_paquete (user_id, nombreRemitente,peso,direccionDestino):
-    resultado=0
     if peso <= 0:
         return False 
-    estado = Estado("en procesos",datetime.now(),user_id)
+    estado = Estado("pendiente de recepción",datetime.now(),user_id)
     db.session.add(estado)
     db.session.commit()
     estado_id=estado
@@ -81,7 +113,7 @@ def permite_eliminar(id_usuario, id_paquete):
         estados = db.session.execute(stmt).all() 
         # print(f"Estados Encontrados:", estados, id_usuario)
         for estado in estados:
-            if (estado.tipo == "en procesos" and estado.usuarios_id != str(id_usuario)):
+            if (estado.tipo == "pendiente de recepción" and estado.usuarios_id != str(id_usuario)):
                 return False
             elif estado.tipo == "recogido":
                 return False
@@ -121,11 +153,9 @@ def paquete_perteneceUsuario(id_paquete, id_usuario):
         stmt = db.session.query(Estado.id, Estado.tipo, Estado.usuarios_id).where(Estado.id == paquete.estados_id)
         estados = db.session.execute(stmt).all() 
         for estado in estados:
-            if (estado.tipo == "en procesos" and estado.usuarios_id == str(id_usuario)):
+            if (estado.tipo == "pendiente de recepción" and estado.usuarios_id == str(id_usuario)):
                 return True
     return False
-
-
 
 def get_help_message (idUsuario):
     if verifique_admin(idUsuario) == "True":

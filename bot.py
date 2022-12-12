@@ -45,8 +45,7 @@ def on_command_start(message):
     logic.registro_cuenta(message.from_user)
     # if logic.verifique_admin(message.from_user.id):
     #     bot.send_message(message.chat.id,"Ingrese su contraseña",parse_mode="Markdown")
-
-
+    
 @bot.message_handler(regexp=r"^(eliminar paquete|e) \d+$")
 def eliminar_paquete_by_id(message):
     bot.send_chat_action(message.chat.id, 'typing')    
@@ -68,8 +67,6 @@ def eliminar_paquete_by_id(message):
     else:
         bot.reply_to(message, "No se puede eliminar este paquete, valide que le pertenezca y que no tenga estado 'recogido'", parse_mode="Markdown")
 
-
-
 def eliminar_paquete(message):
     global id_paquete_eliminar
     res = message.text
@@ -79,8 +76,6 @@ def eliminar_paquete(message):
         bot.reply_to(message, "No se ha eliminado el paquete", parse_mode="Markdown")
         id_paquete_eliminar = None
     
-
-
 @bot.message_handler(regexp=r"^(consultar estados|ce) \d+$")
 def consultar_estados(message):
     bot.send_chat_action(message.chat.id, 'typing')    
