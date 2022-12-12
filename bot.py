@@ -29,7 +29,7 @@ def crear_paquete(message):
 def listar_paquetes(message):
     bot.send_chat_action(message.chat.id, 'typing')
     text = ""
-    if logic.verifique_admin(message.from_user.id) == "True":
+    if logic.verifique_admin(message.from_user.id):
         text= logic.listar_paquetes_admin();
     else:
         text = logic.listar_paquetes_por_usuario(message.from_user.id);
@@ -83,6 +83,29 @@ def consultar_estados(message):
     else:
         bot.reply_to(message, logic.consultar_estados_by_id(message.from_user.id,partes[2].strip()), parse_mode="Markdown")
 
+@bot.message_handler(regexp=r"^(cambiar estado|cae) (\d+), ([a-zA-ZÀ-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-ZÀ-ÖØ-öø-ÿ]+\.?)*)$")
+def cambiar_estado(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    partes = re.match(r"^(cambiar estado|cae) (\d+), ([a-zA-ZÀ-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-ZÀ-ÖØ-öø-ÿ]+\.?)*)$",message.text,flags=re.IGNORECASE)
+    paquete_id = partes[2]
+    nombreEstado = partes[3]
+    control = logic.cambiar_estado(paquete_id, message.from_user.id,nombreEstado)
+    bot.reply_to(message,f"\U0001F4B0 ¡Estado cambiado!: {nombreEstado}"
+        if control == True 
+        else "\U0001F4A9 Tuve problemas registrando la transacción, ejecuta/start y vuelve a intentarlo")
+
+##### ELIMINAR ESTADO #####
+@bot.message_handler(regexp=r"^(eliminar estado|ee) (\d+)$")
+def eliminar_estado(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    partes = re.match(r"^(eliminar estado|ee) (\d+)$",message.text,flags=re.IGNORECASE)
+    idEstado = partes[2]
+    control = logic.remover_estado(idEstado)
+    bot.reply_to(message,f"\U0001F4B0 ¡Estado eliminado!: {idEstado}"
+        if control == True 
+        else "\U0001F4A9 Tuve problemas registrando la transacción, ejecuta/start y vuelve a intentarlo")
+
+
 @bot.message_handler(commands=['help'])
 def on_command_help(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -101,18 +124,6 @@ def on_fallback(message):
     bot.reply_to( message,"\U0001F63F Ups, no entendí lo que me dijiste.")
 
 
-@bot.message_handler(regexp=r"^(cambiar estado|camb estd|cae) ([a-zA-ZÀ-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-ZÀ-ÖØ-öø-ÿ]+\.?)*),([+-]?([0-9]*[.])?[0-9]+),([a-zA-Z1-9À-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-Z1-9À-ÖØ-öø-ÿ]+\.?)* (((#|[nN][oO]\.?) ?)?\d{1,4}(( ?[a-zA-Z0-9\-]+)+)?))$")
-def cambiar_estado(message):
-    bot.send_chat_action(message.chat.id, 'typing')
-    partes = re.match(r"^(cambiar estado) ([a-zA-ZÀ-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-ZÀ-ÖØ-öø-ÿ]+\.?)*),([+-]?([0-9]*[.])?[0-9]+),([a-zA-Z1-9À-ÖØ-öø-ÿ]+\.?(( |\-)[a-zA-Z1-9À-ÖØ-öø-ÿ]+\.?)* (((#|[nN][oO]\.?) ?)?\d{1,4}(( ?[a-zA-Z0-9\-]+)+)?))$",message.text,flags=re.IGNORECASE)
-    #print (partes.groups())
-    nombreRemitente = partes[2]
-    peso = float(partes[5])
-    direccionDestino = partes[7]
-    control = logic.crear_paquete (message.from_user.id,nombreRemitente,peso,direccionDestino)
-    bot.reply_to(message,f"\U0001F4B0 ¡Paquete Creado!: {nombreRemitente}"
-        if control == True 
-        else "\U0001F4A9 Tuve problemas registrando la transacción, ejecuta/start y vuelve a intentarlo")
 #########################################################
 if __name__ == '__main__':
     bot.polling(timeout=20)

@@ -10,34 +10,34 @@ def get_welcome_message(bot_data):
     response = (f"Hola, soy *{bot_data.first_name}* "f"también conocido como *{bot_data.username}*.\n\n""¡Estoy aquí para gestionar el envio de paquetes!")
     return response
 
-def cambiar_estado(paquete_id, user_id, estado_id, nombreEstado):
-    paquete = db.session.query(Paquete).get(paquete_id)
+def cambiar_estado(paquete_id, user_id, nombreEstado):
+    paquete = db.session.query(Paquete).filter(Paquete.id == paquete_id).first()
     db.session.commit()
-
     if paquete == None:
         return "El paquete no ha sido encontrado."
 
     estado = Estado(nombreEstado,datetime.now(),user_id)
     db.session.add(estado)
     db.session.commit()
-    estado_id = estado
+    estado_id = estado.id
 
-    db.session.query(Estado).get(paquete_id).update({'estados_id': estado_id})
+    db.session.query(Paquete).filter(Paquete.id == paquete_id).update({'estados_id': estado_id})
     db.session.commit()
 
     return True
 
-def remover_estado(nombreEstado, fechaEstado):
-    estado = db.session.query(Estado).filter(and_(Estado.tipo == nombreEstado, Estado.fechaHora.date == fechaEstado))
+def remover_estado(idEstado):
 
-    estado_id = estado
-
-    paquete = db.session.query(Paquete).filter(Paquete.estados_id == estado_id)
-
-    if paquete != None:
-        return "El estado esta asociado a un paquete"
+    paquete = db.session.query(Paquete).filter(Paquete.estados_id == idEstado).first()
+    db.session.commit()
     
-    db.session.query(Estado).delete(estado_id)
+    if paquete != None:
+        print('entro paquete')
+        return "El estado esta asociado a un paquete"
+
+    estado = db.session.query(Estado).get(idEstado)
+    db.session.delete(estado)
+    db.session.commit()
 
     return True
 
@@ -53,7 +53,7 @@ def registro_cuenta(userInfo):
     return False
 
 def verifique_admin(user_id):
-    administrador = [1898458696, 5141666038]
+    administrador = [1898458696, 5141666038, 1923311798]
     if user_id in administrador:
         return True
     else:
@@ -153,12 +153,12 @@ def paquete_perteneceUsuario(id_paquete, id_usuario):
         stmt = db.session.query(Estado.id, Estado.tipo, Estado.usuarios_id).where(Estado.id == paquete.estados_id)
         estados = db.session.execute(stmt).all() 
         for estado in estados:
-            if (estado.tipo == "pendiente de recepción" and estado.usuarios_id == str(id_usuario)):
+            if (estado.usuarios_id == str(id_usuario)):
                 return True
     return False
 
 def get_help_message (idUsuario):
-    if verifique_admin(idUsuario) == "True":
+    if verifique_admin(idUsuario):
         return (
             "Estos son los comandos y órdenes disponibles:\n"
             "\n"
@@ -167,8 +167,8 @@ def get_help_message (idUsuario):
             "*/about* - Muestra detalles de esta aplicación\n"
             f"*Admin* \n"
             "*listar paquetes|lp* - Lista los paquetes exitentes para el administrador\n"
-            "*agregar estado|ae* - Agregar un nuevo estado a un paquete\n"
-            "*eliminar estado|ee* - Eliminar estado de un paquete, cuando hay error\n"
+            "*cambiar estado|camb estd|cae* - cambiar el estado de un paquete\n"
+            "*eliminar estado|elim estd|ee* - Eliminar estado de un paquete\n"
             )
     else:
         return (
